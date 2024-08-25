@@ -1,6 +1,7 @@
 package dev.asodesu.teamsilly.game
 
 import dev.asodesu.origami.engine.add
+import dev.asodesu.origami.engine.addBy
 import dev.asodesu.origami.engine.scene.OfflinePlayerScene
 import dev.asodesu.origami.engine.wiring.annotations.Subscribe
 import dev.asodesu.origami.utilities.bukkit.allPlayers
@@ -10,12 +11,15 @@ import dev.asodesu.teamsilly.build.element.resolve
 import dev.asodesu.teamsilly.clues.Clue
 import dev.asodesu.teamsilly.clues.ClueManager
 import dev.asodesu.teamsilly.config.Locations
+import dev.asodesu.teamsilly.utils.reset
+import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
+import org.bukkit.entity.Player
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
 
-class SillyGameScene(world: World, mapData: MapData, id: String) : OfflinePlayerScene(id) {
+class SillyGameScene(val world: World, val mapData: MapData, id: String) : OfflinePlayerScene(id) {
     val playerSpawnPositions = mapData.positions.all("player_spawn").resolve(world)
     var avaliableSpawns = playerSpawnPositions.toMutableList()
 
@@ -24,6 +28,8 @@ class SillyGameScene(world: World, mapData: MapData, id: String) : OfflinePlayer
         allPlayers.forEach {
             addPlayer(it)
             it.teleportAsync(getPlayerSpawn())
+            it.reset()
+            it.gameMode = GameMode.SURVIVAL
         }
     }
 
@@ -31,7 +37,7 @@ class SillyGameScene(world: World, mapData: MapData, id: String) : OfflinePlayer
     }
 
     override fun setupComponents() {
-        this.add<ClueManager>()
+        this.addBy { ClueManager(this, mapData) }
     }
 
     @Subscribe
