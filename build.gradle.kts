@@ -23,6 +23,8 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
     implementation("dev.asodesu.origami.engine:engine:0.0.1-alpha")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.9.2")
+    compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.9.2") { isTransitive = false }
 }
 
 tasks.withType<JavaCompile> {
@@ -38,10 +40,13 @@ tasks.withType<KotlinCompile> {
 tasks.runServer {
     minecraftVersion("1.21.1")
     systemProperty("paper.playerconnection.keepalive", 36000)
-    systemProperty("paper.disablePluginRemapping", true)
     systemProperty("paper.disableOldApiSupport", true)
     if (project.hasProperty("hotswapping")) {
         jvmArgs("-XX:+AllowEnhancedClassRedefinition")
+    }
+
+    downloadPlugins {
+        modrinth("fastasyncworldedit", "2.11.1")
     }
 }
 
@@ -54,6 +59,8 @@ bukkit {
 
     main = "dev.asodesu.teamsilly.SillyGamePlugin"
     apiVersion = "1.21"
+
+    depend = listOf("FastAsyncWorldEdit")
 }
 
 tasks {

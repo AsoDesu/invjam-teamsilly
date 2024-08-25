@@ -4,7 +4,7 @@ import java.lang.IllegalStateException
 import org.bukkit.World
 
 fun <T : MapElement<*>> List<T>.all(id: String): List<T> {
-    return this.filter { it.id == id }
+    return this.filter { if (id == "*") true else it.id == id }
 }
 
 fun <T : MapElement<*>> List<T>.single(id: String): T {
@@ -19,7 +19,9 @@ fun <T : MapElement<*>> List<T>.single(id: String): T {
 fun <T : MapElement<*>> List<T>.withAttribute(key: String, value: String): List<T> {
     return this.filter { it.attributes[key] == value }
 }
-
+fun <T : MapElement<*>> List<T>.withAttributes(attributes: Map<String, String>): List<T> {
+    return this.filter { element -> attributes.all { element.attributes[it.key] == it.value } }
+}
 fun <T : MapElement<*>> List<T>.withAttributes(vararg attributes: Pair<String, String>): List<T> {
     return this.filter { element -> attributes.all { element.attributes[it.first] == it.second } }
 }
