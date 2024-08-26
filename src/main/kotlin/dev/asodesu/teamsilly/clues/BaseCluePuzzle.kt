@@ -13,6 +13,6 @@ interface BaseCluePuzzle {
     fun setupComponents(scene: Scene)
 
     interface CompleteListener {
-        fun onComplete(player: Player)
+        fun onPuzzleComplete(player: Player)
     }
 }

@@ -10,5 +10,6 @@ fun Player.reset() {
     this.level = 0
     this.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED)?.baseValue = 0.1
     this.health = this.getAttribute(Attribute.GENERIC_MAX_HEALTH)?.value ?: 20.0
-    this.flySpeed = 1f
+    this.foodLevel = 20
+    this.flySpeed = 0.2f
 }

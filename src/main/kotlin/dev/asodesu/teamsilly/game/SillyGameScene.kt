@@ -10,8 +10,12 @@ import dev.asodesu.teamsilly.build.element.all
 import dev.asodesu.teamsilly.build.element.resolve
 import dev.asodesu.teamsilly.clues.Clue
 import dev.asodesu.teamsilly.clues.ClueManager
+import dev.asodesu.teamsilly.clues.HopperHandler
+import dev.asodesu.teamsilly.clues.SafeHandler
 import dev.asodesu.teamsilly.config.Locations
 import dev.asodesu.teamsilly.utils.reset
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.audience.ForwardingAudience
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
@@ -19,7 +23,7 @@ import org.bukkit.World
 import org.bukkit.entity.Player
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
 
-class SillyGameScene(val world: World, val mapData: MapData, id: String) : OfflinePlayerScene(id) {
+class SillyGameScene(val world: World, val mapData: MapData, id: String) : OfflinePlayerScene(id), ForwardingAudience {
     val playerSpawnPositions = mapData.positions.all("player_spawn").resolve(world)
     var avaliableSpawns = playerSpawnPositions.toMutableList()
 
@@ -37,7 +41,8 @@ class SillyGameScene(val world: World, val mapData: MapData, id: String) : Offli
     }
 
     override fun setupComponents() {
-        this.addBy { ClueManager(this, mapData) }
+        this.add(ClueManager(this, mapData))
+        this.add(HopperHandler(this, mapData))
     }
 
     @Subscribe
@@ -54,4 +59,6 @@ class SillyGameScene(val world: World, val mapData: MapData, id: String) : Offli
         avaliableSpawns.remove(spawn)
         return spawn
     }
+
+    override fun audiences() = players.mapNotNull { it.player }
 }

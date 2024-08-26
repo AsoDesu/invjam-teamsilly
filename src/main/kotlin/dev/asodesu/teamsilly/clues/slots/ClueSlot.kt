@@ -8,14 +8,17 @@ import dev.asodesu.origami.utilities.bukkit.play
 import dev.asodesu.origami.utilities.error
 import dev.asodesu.origami.utilities.miniMessage
 import dev.asodesu.origami.utilities.sound
+import dev.asodesu.origami.utilities.success
 import dev.asodesu.teamsilly.build.MapData
 import dev.asodesu.teamsilly.build.element.all
 import dev.asodesu.teamsilly.build.element.noRotation
 import dev.asodesu.teamsilly.build.element.withAttribute
 import dev.asodesu.teamsilly.clues.Clue
+import dev.asodesu.teamsilly.clues.ClueManager
 import dev.asodesu.teamsilly.config.Locations
 import dev.asodesu.teamsilly.game.SillyGameScene
 import org.bukkit.Material
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
@@ -23,14 +26,22 @@ import org.bukkit.inventory.meta.CompassMeta
 import org.bukkit.util.Vector
 import kotlin.time.Duration.Companion.seconds
 
-class ClueSlot(val index: Int, val scene: SillyGameScene, mapData: MapData) : Behaviour() {
+class ClueSlot(index: Int, val scene: SillyGameScene, mapData: MapData, val manager: ClueManager) : Behaviour() {
     private var clue: Clue? = null
     private val button = mapData.positions
         .all("clue_button").withAttribute("index", index).single()
         .resolve(scene.world).noRotation()
 
     fun setClue(clue: Clue?) {
+        this.clue?.boundSlot = null
         this.clue = clue
+        clue?.boundSlot = this
+    }
+
+    fun onComplete(player: OfflinePlayer?) {
+        val name = player?.name ?: "Someone on your team"
+        scene.success("<dark_green>$name</dark_green> found ${clue?.name}")
+        setClue(manager.nextClue())
     }
 
     @Subscribe
