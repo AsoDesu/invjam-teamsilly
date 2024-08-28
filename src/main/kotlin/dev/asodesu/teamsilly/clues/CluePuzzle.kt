@@ -21,7 +21,7 @@ import org.bukkit.util.BoundingBox
 
 abstract class CluePuzzle(override val id: String, mapData: MapData, world: World) : Behaviour(), BaseCluePuzzle {
     override val startingLocation = mapData.getTarget(world)
-    open val region =  mapData.getRegion()
+    open val regions = mapData.getRegion()
 
     override fun setupComponents(scene: Scene) {
         scene.add(this)
@@ -38,7 +38,15 @@ abstract class CluePuzzle(override val id: String, mapData: MapData, world: Worl
 
     @Subscribe
     fun enter(evt: PlayerMoveEvent) {
-        if (!region.contains(evt.from.toVector()) && region.contains(evt.to.toVector())) {
+        var movingFrom = false
+        var movingTo = false
+
+        regions.forEach { box ->
+            if (box.contains(evt.from.toBlockLocation().toVector())) movingFrom = true
+            if (box.contains(evt.to.toBlockLocation().toVector())) movingTo = true
+        }
+
+        if (!movingFrom && movingTo) {
             evt.player.sendTitle(subtitle = "<aqua><obf>[]</obf></aqua> $name Based Lock <red><obf>[]</obf>")
             evt.player.play(SOUND_PUZZLES_ENTER)
         }
@@ -52,8 +60,8 @@ abstract class CluePuzzle(override val id: String, mapData: MapData, world: Worl
         return positions.all("puzzle_target").withPuzzleId().resolveSingle(world)
     }
 
-    private fun MapData.getRegion(): BoundingBox {
+    private fun MapData.getRegion(): List<BoundingBox> {
         return boundingBoxes.all("puzzle_region").withPuzzleId()
-            .single().box
+            .map { it.box.expand(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) }
     }
 }

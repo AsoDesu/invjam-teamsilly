@@ -15,6 +15,8 @@ import dev.asodesu.teamsilly.build.element.noRotation
 import dev.asodesu.teamsilly.build.element.withAttribute
 import dev.asodesu.teamsilly.clues.Clue
 import dev.asodesu.teamsilly.clues.ClueManager
+import dev.asodesu.teamsilly.clues.display.ActiveClueDisplay
+import dev.asodesu.teamsilly.clues.display.ClueDisplay
 import dev.asodesu.teamsilly.config.Locations
 import dev.asodesu.teamsilly.game.SillyGameScene
 import org.bukkit.Material
@@ -26,16 +28,31 @@ import org.bukkit.inventory.meta.CompassMeta
 import org.bukkit.util.Vector
 import kotlin.time.Duration.Companion.seconds
 
-class ClueSlot(index: Int, val scene: SillyGameScene, mapData: MapData, val manager: ClueManager) : Behaviour() {
-    private var clue: Clue? = null
+class ClueSlot(index: Int, val scene: SillyGameScene, mapData: MapData, private val manager: ClueManager) : Behaviour() {
+    var clue: Clue? = null
+        private set
+    var display: ClueDisplay? = null
+
     private val button = mapData.positions
         .all("clue_button").withAttribute("index", index).single()
         .resolve(scene.world).noRotation()
+    val displayOrigin = mapData.positions
+        .all("clue_display").withAttribute("index", index).single()
+        .resolve(scene.world).noRotation()
 
     fun setClue(clue: Clue?) {
+        if (clue == this.clue) return
+
         this.clue?.boundSlot = null
+        this.display?.destroy()
+
         this.clue = clue
-        clue?.boundSlot = this
+        if (clue != null) {
+            clue.boundSlot = this
+            this.display = ActiveClueDisplay(displayOrigin, clue)
+        } else {
+            this.display = null
+        }
     }
 
     fun onComplete(player: OfflinePlayer?) {
@@ -45,7 +62,7 @@ class ClueSlot(index: Int, val scene: SillyGameScene, mapData: MapData, val mana
     }
 
     @Subscribe
-    fun interact(evt: PlayerInteractEvent) {
+    private fun interact(evt: PlayerInteractEvent) {
         val block = evt.clickedBlock ?: return
         if (!block.type.name.endsWith("_BUTTON")) return
         if (clue == null) return
@@ -68,5 +85,10 @@ class ClueSlot(index: Int, val scene: SillyGameScene, mapData: MapData, val mana
             val dispenser = sound("block.dispenser.dispense")
             it.world.play(dispenser, it.location)
         }
+    }
+
+    override fun destroy() {
+        super.destroy()
+        display?.destroy()
     }
 }

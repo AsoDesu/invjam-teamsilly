@@ -16,6 +16,7 @@ import org.bukkit.persistence.PersistentDataType
 class Clue(
     val id: String,
     val name: String,
+    val description: String,
     val item: ItemStack,
     val puzzle: BaseCluePuzzle
 ) : BaseCluePuzzle.CompleteListener {
@@ -25,6 +26,7 @@ class Clue(
         puzzle.completeListener = this
         item.editMeta {
             it.persistentDataContainer.set(KEY_CLUEID, PersistentDataType.STRING, id)
+            it.itemName(miniMessage(name))
         }
     }
 

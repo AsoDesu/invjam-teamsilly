@@ -26,13 +26,19 @@ import kotlin.time.Duration.Companion.seconds
 class ClueManager(val scene: SillyGameScene, val mapData: MapData) : Behaviour() {
     private var index = 0
     val clues = listOf(
-        Clue("testClue1", "Test Clue 1", ItemStack(Material.SEA_PICKLE), ParkourPuzzle("testClue1", scene.world, mapData)),
-        Clue("testClue2", "Test Clue 2", ItemStack(Material.RED_CANDLE), RedstonePuzzle("testClue2", scene.world, mapData)),
-        Clue("testClue3", "Test Clue 3", ItemStack(Material.DIAMOND_SWORD), EmptyCluePuzzle()),
-        Clue("testClue4", "Test Clue 4", ItemStack(Material.REDSTONE), EmptyCluePuzzle()),
-        Clue("testClue5", "Test Clue 5", ItemStack(Material.LEATHER_BOOTS), EmptyCluePuzzle()),
+        Clue("sugarClue", "<i>\"sugar\"", "A small sample of <i>\"sugar\"</i> found around the crime scene", ItemStack(Material.SUGAR), ParkourPuzzle("sugarClue", scene.world, mapData)),
+        Clue("vialClue", "Blood Vial", "A bright-red vial of blood collected from the victim", ItemStack(Material.RED_CANDLE), RedstonePuzzle("vileClue", scene.world, mapData)),
+        Clue("mapClue", "Location Data", "A map with various locations marked, including the murder location", ItemStack(Material.FILLED_MAP), EmptyCluePuzzle()), // BuildPuzzle
+        Clue("witnessClue", "Witness Statement", "A statement from a witness around the area.", ItemStack(Material.WRITTEN_BOOK), EmptyCluePuzzle()), // Whack a mole
+        Clue("shoesClue", "Discarded Shoes", "Light-brown shoes, found around the scene and potentially discarded by the suspect", ItemStack(Material.LEATHER_BOOTS), EmptyCluePuzzle()), // TRIVIA
+        Clue("cameraClue", "Camera Log", "A 30-minute long tape from a nearby camera, showing the suspect around the crime scene", ItemStack(Material.NETHERITE_INGOT), EmptyCluePuzzle()), // Trident Challenge
+        Clue("weaponClue", "Blood-Stained Axe", "A shining, bright-blue axe, forged from diamonds, fresh from the depths", ItemStack(Material.DIAMOND_AXE), EmptyCluePuzzle()), // Elytra Challenge
+        Clue("fibreClue", "Clothes Fibers", "Fibers torn from the suspects clothes and left at the crime scene", ItemStack(Material.NETHERITE_SCRAP), EmptyCluePuzzle()), // WirePuzzle
+        Clue("wordleClue", "Motive", "A piece of paper left at the scene, seems to indicate some sort of motive...", ItemStack(Material.PAPER), EmptyCluePuzzle()), // Wordle
+        Clue("corpseClue", "The Corpse.", "The corpse of the victim, preserved temporarily", ItemStack(Material.PLAYER_HEAD), EmptyCluePuzzle()), // Maths
+        Clue("fingerprintsClue", "Fingerprints", "Fingerprints left on various surfaces in the surrounding area.", ItemStack(Material.GUNPOWDER), EmptyCluePuzzle()), // Search
     )
-    private val clueSlots = Array(4) { i ->
+    val clueSlots = Array(4) { i ->
         ClueSlot(i, scene, mapData, this)
     }
 
@@ -49,5 +55,9 @@ class ClueManager(val scene: SillyGameScene, val mapData: MapData) : Behaviour()
 
     fun nextClue(): Clue? {
         return clues.getOrNull(index++)
+    }
+
+    override fun destroy() {
+        clueSlots.forEach { it.destroy() }
     }
 }
