@@ -1,5 +1,6 @@
 package dev.asodesu.teamsilly.utils
 
+import net.kyori.adventure.audience.Audience
 import org.bukkit.attribute.Attribute
 import org.bukkit.entity.Player
 
@@ -13,3 +14,5 @@ fun Player.reset() {
     this.foodLevel = 20
     this.flySpeed = 0.2f
 }
+
+fun Iterable<Player>.audience() = Audience.audience(this)

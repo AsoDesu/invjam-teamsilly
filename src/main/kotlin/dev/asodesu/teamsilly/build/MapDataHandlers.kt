@@ -2,6 +2,7 @@ package dev.asodesu.teamsilly.build
 
 import cloud.commandframework.arguments.flags.CommandFlag
 import cloud.commandframework.arguments.standard.BooleanArgument
+import cloud.commandframework.arguments.standard.EnumArgument
 import cloud.commandframework.arguments.standard.StringArgument
 import cloud.commandframework.context.CommandContext
 import cloud.commandframework.kotlin.MutableCommandBuilder
@@ -25,8 +26,10 @@ import dev.asodesu.teamsilly.build.element.withAttributes
 import dev.asodesu.teamsilly.utils.getSelection
 import dev.asodesu.teamsilly.utils.setSelection
 import java.lang.Exception
+import org.bukkit.Bukkit
 import org.bukkit.Color
 import org.bukkit.Material
+import org.bukkit.block.BlockFace
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -107,12 +110,13 @@ object MapDataHandlers {
             registerCopy("new") { createCommands() }
             registerCopy("select") { selectCommands() }
             registerCopy("delete") { deleteCommands() }
+            registerCopy("preset") { presetCommands() }
         }
     }
 
     private fun MutableCommandBuilder<CommandSender>.createCommands() {
         registerCopy("position") {
-            idAttribArguments()
+            idAttribAutocompleteArguments("position")
             handler {
                 val id = it.get<String>("id")
                 val attributes = it.getAttributes() ?: return@handler
@@ -131,14 +135,14 @@ object MapDataHandlers {
         }
 
         registerCopy("bound") {
-            idAttribArguments()
+            idAttribAutocompleteArguments("bound")
             handler {
                 val player = it.sender as Player
                 val id = it.get<String>("id")
                 val attributes = it.getAttributes() ?: return@handler
                 val mapEditor = it.getMapEditor() ?: return@handler
 
-                mapEditor.addBoundingBox(player.getSelection(), id, attributes)
+                mapEditor.addBoundingBox(player.getSelection().expand(0.0, 0.0, 0.0, 1.0, 1.0, 1.0), id, attributes)
             }
         }
     }
@@ -212,6 +216,39 @@ object MapDataHandlers {
                     count++
                 }
                 it.sender.success("Removed $count positions.")
+            }
+        }
+    }
+    private fun MutableCommandBuilder<CommandSender>.presetCommands() {
+        registerCopy("safe") {
+            argument(StringArgument.of("id"))
+            argument(EnumArgument.of(BlockFace::class.java, "facing"))
+            handler {
+                val clueId = it.get<String>("id")
+                val facing = it.get<BlockFace>("facing")
+                (it.sender as Player).performCommand(
+                    "sillygame build edit new position safe_block --attr clue_id=$clueId --attr facing=${facing.name.lowercase()}"
+                )
+            }
+        }
+
+        registerCopy("puzzle_target") {
+            argument(StringArgument.of("id"))
+            handler {
+                val puzzleId = it.get<String>("id")
+                (it.sender as Player).performCommand(
+                    "sillygame build edit new position puzzle_target --attr puzzle_id=${puzzleId}"
+                )
+            }
+        }
+
+        registerCopy("puzzle_region") {
+            argument(StringArgument.of("id"))
+            handler {
+                val puzzleId = it.get<String>("id")
+                (it.sender as Player).performCommand(
+                    "sillygame build edit new bound puzzle_region --attr puzzle_id=${puzzleId}"
+                )
             }
         }
     }

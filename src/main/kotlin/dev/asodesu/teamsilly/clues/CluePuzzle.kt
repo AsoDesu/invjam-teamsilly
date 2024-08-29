@@ -62,6 +62,6 @@ abstract class CluePuzzle(override val id: String, mapData: MapData, world: Worl
 
     private fun MapData.getRegion(): List<BoundingBox> {
         return boundingBoxes.all("puzzle_region").withPuzzleId()
-            .map { it.box.expand(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) }
+            .map { it.box }
     }
 }

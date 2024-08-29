@@ -12,6 +12,7 @@ import dev.asodesu.origami.utilities.error
 import dev.asodesu.origami.utilities.play
 import dev.asodesu.origami.utilities.sound
 import dev.asodesu.teamsilly.build.MapData
+import dev.asodesu.teamsilly.clues.puzzles.BuildPuzzle
 import dev.asodesu.teamsilly.clues.puzzles.EmptyCluePuzzle
 import dev.asodesu.teamsilly.clues.puzzles.ParkourPuzzle
 import dev.asodesu.teamsilly.clues.puzzles.RedstonePuzzle
@@ -28,7 +29,7 @@ class ClueManager(val scene: SillyGameScene, val mapData: MapData) : Behaviour()
     val clues = listOf(
         Clue("sugarClue", "<i>\"sugar\"", "A small sample of <i>\"sugar\"</i> found around the crime scene", ItemStack(Material.SUGAR), ParkourPuzzle("sugarClue", scene.world, mapData)),
         Clue("vialClue", "Blood Vial", "A bright-red vial of blood collected from the victim", ItemStack(Material.RED_CANDLE), RedstonePuzzle("vileClue", scene.world, mapData)),
-        Clue("mapClue", "Location Data", "A map with various locations marked, including the murder location", ItemStack(Material.FILLED_MAP), EmptyCluePuzzle()), // BuildPuzzle
+        Clue("mapClue", "Location Data", "A map with various locations marked, including the murder location", ItemStack(Material.FILLED_MAP), BuildPuzzle("mapClue", scene.world, mapData)), // BuildPuzzle
         Clue("witnessClue", "Witness Statement", "A statement from a witness around the area.", ItemStack(Material.WRITTEN_BOOK), EmptyCluePuzzle()), // Whack a mole
         Clue("shoesClue", "Discarded Shoes", "Light-brown shoes, found around the scene and potentially discarded by the suspect", ItemStack(Material.LEATHER_BOOTS), EmptyCluePuzzle()), // TRIVIA
         Clue("cameraClue", "Camera Log", "A 30-minute long tape from a nearby camera, showing the suspect around the crime scene", ItemStack(Material.NETHERITE_INGOT), EmptyCluePuzzle()), // Trident Challenge

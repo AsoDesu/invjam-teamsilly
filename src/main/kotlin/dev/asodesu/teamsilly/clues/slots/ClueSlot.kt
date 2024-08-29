@@ -7,6 +7,8 @@ import dev.asodesu.origami.utilities.bukkit.debug
 import dev.asodesu.origami.utilities.bukkit.play
 import dev.asodesu.origami.utilities.error
 import dev.asodesu.origami.utilities.miniMessage
+import dev.asodesu.origami.utilities.play
+import dev.asodesu.origami.utilities.sendTitle
 import dev.asodesu.origami.utilities.sound
 import dev.asodesu.origami.utilities.success
 import dev.asodesu.teamsilly.build.MapData
@@ -58,6 +60,11 @@ class ClueSlot(index: Int, val scene: SillyGameScene, mapData: MapData, private 
     fun onComplete(player: OfflinePlayer?) {
         val name = player?.name ?: "Someone on your team"
         scene.success("<dark_green>$name</dark_green> found ${clue?.name}")
+        scene.sendTitle(
+            subtitle = "<dark_green><obf>[]</obf></dark_green> <green>${clue?.name} collected</green> <dark_green><obf>[]</dark_green>",
+            stay = 4.seconds
+        )
+        scene.play("asodesu:sillygame.clue_found")
         setClue(manager.nextClue())
     }
 

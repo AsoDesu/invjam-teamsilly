@@ -9,6 +9,7 @@ import dev.asodesu.origami.utilities.bukkit.runLater
 import dev.asodesu.origami.utilities.error
 import dev.asodesu.origami.utilities.play
 import dev.asodesu.origami.utilities.sendTitle
+import dev.asodesu.origami.utilities.ticks
 import dev.asodesu.teamsilly.KEY_CLUEID
 import dev.asodesu.teamsilly.SillyGamePlugin
 import dev.asodesu.teamsilly.build.MapData
@@ -81,7 +82,7 @@ class SafeHandler(val id: String, val clue: Clue, scene: SillyGameScene) : Behav
         player.swingHand(evt.hand ?: EquipmentSlot.HAND)
         player.play(SOUND_SAFE_ACTIVATE)
         player.play(SOUND_SAFE_RISER)
-        runLater(2.5.seconds) {
+        runLater(45.ticks) {
             particleOrigin.world.spawn(particleOrigin.off(y = -1.25), Firework::class.java) { firework ->
                 firework.velocity = Vector(1.0, 0.0, 1.0).multiply(direction.direction)
                 firework.fireworkMeta = firework.fireworkMeta.also { meta ->
@@ -92,10 +93,12 @@ class SafeHandler(val id: String, val clue: Clue, scene: SillyGameScene) : Behav
                 firework.isShotAtAngle = true
                 firework.detonate()
             }
+            particleOrigin.world.dropItem(particleOrigin.off(y = -1.25), clue.item) {
+                it.velocity = Vector(0.25, -0.01, 0.25).multiply(direction.direction)
+            }
 
             player.play("entity.item.pickup")
             player.play(SOUND_SAFE_OPEN)
-            player.inventory.addItem(clue.item)
             player.sendTitle(subtitle = "<aqua><obf>[]</obf></aqua> Obtained <green>${clue.name} <red><obf>[]</obf></red>")
         }
         //this.destroy()
