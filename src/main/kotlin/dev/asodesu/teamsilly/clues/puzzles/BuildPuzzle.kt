@@ -33,7 +33,6 @@ class BuildPuzzle(id: String, val world: World, mapData: MapData) : CluePuzzle(i
         val chests = mapData.positions.all("build_chest").withPuzzleId()
         val items = builds.flatMap { it.items }
         val perChest = ceil(items.size.toFloat() / chests.size).toInt()
-        debug("${items.size} / ${chests.size} / $perChest")
 
         var i = 0
         chests.forEach { pos ->
