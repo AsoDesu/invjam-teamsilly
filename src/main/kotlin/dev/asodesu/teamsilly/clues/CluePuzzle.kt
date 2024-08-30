@@ -23,6 +23,8 @@ abstract class CluePuzzle(override val id: String, mapData: MapData, world: Worl
     override val startingLocation = mapData.getTarget(world)
     open val regions = mapData.getRegion()
 
+    override val kitRequirement = "Any"
+
     override fun setupComponents(scene: Scene) {
         scene.add(this)
     }
@@ -47,9 +49,13 @@ abstract class CluePuzzle(override val id: String, mapData: MapData, world: Worl
         }
 
         if (!movingFrom && movingTo) {
-            evt.player.sendTitle(subtitle = "<aqua><obf>[]</obf></aqua> $name Based Lock <red><obf>[]</obf>")
+            evt.player.sendTitle(subtitle = getSubtitle())
             evt.player.play(SOUND_PUZZLES_ENTER)
         }
+    }
+
+    open fun getSubtitle(): String {
+        return "<aqua><obf>[]</obf></aqua> $name Based Lock <red><obf>[]</obf>"
     }
 
     fun <T : MapElement<*>> List<T>.withPuzzleId(): List<T> {

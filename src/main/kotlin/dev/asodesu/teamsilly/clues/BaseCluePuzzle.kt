@@ -8,6 +8,7 @@ interface BaseCluePuzzle {
     val id: String
     val name: String
     val startingLocation: Location
+    val kitRequirement: String
     var completeListener: CompleteListener?
 
     fun setupComponents(scene: Scene)

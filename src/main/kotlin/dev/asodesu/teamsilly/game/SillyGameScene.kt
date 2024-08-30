@@ -2,9 +2,12 @@ package dev.asodesu.teamsilly.game
 
 import dev.asodesu.origami.engine.add
 import dev.asodesu.origami.engine.addBy
+import dev.asodesu.origami.engine.player.container
 import dev.asodesu.origami.engine.scene.OfflinePlayerScene
 import dev.asodesu.origami.engine.wiring.annotations.Subscribe
 import dev.asodesu.origami.utilities.bukkit.allPlayers
+import dev.asodesu.origami.utilities.bukkit.filterWorld
+import dev.asodesu.teamsilly.behaviour.PlayerProtection
 import dev.asodesu.teamsilly.build.MapData
 import dev.asodesu.teamsilly.build.element.all
 import dev.asodesu.teamsilly.build.element.resolve
@@ -21,6 +24,7 @@ import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
 import org.bukkit.entity.Player
+import org.bukkit.event.Event
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
 
 class SillyGameScene(val world: World, val mapData: MapData, id: String) : OfflinePlayerScene(id), ForwardingAudience {
@@ -38,6 +42,7 @@ class SillyGameScene(val world: World, val mapData: MapData, id: String) : Offli
     }
 
     override fun setupComponents(player: OfflinePlayer) {
+        player.container.add<PlayerProtection>()
     }
 
     override fun setupComponents() {
@@ -61,4 +66,5 @@ class SillyGameScene(val world: World, val mapData: MapData, id: String) : Offli
     }
 
     override fun audiences() = players.mapNotNull { it.player }
+    override fun filter(event: Event) = event.filterWorld(world)
 }

@@ -12,6 +12,7 @@ class EmptyCluePuzzle : BaseCluePuzzle {
     override val name: String = "Empty"
     override val startingLocation: Location = Location(null, 0.0, 0.0, 0.0)
     override var completeListener: BaseCluePuzzle.CompleteListener? = null
+    override val kitRequirement: String = "empty"
 
     override fun setupComponents(scene: Scene) {
     }

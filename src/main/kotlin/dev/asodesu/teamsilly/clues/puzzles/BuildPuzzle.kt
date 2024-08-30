@@ -19,6 +19,8 @@ import org.bukkit.block.BlockFace
 import org.bukkit.block.Chest
 import org.bukkit.block.data.Directional
 import org.bukkit.entity.Player
+import org.bukkit.event.EventPriority
+import org.bukkit.event.block.BlockDamageEvent
 import org.bukkit.event.block.BlockPlaceEvent
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.BoundingBox
@@ -26,6 +28,7 @@ import kotlin.math.ceil
 
 class BuildPuzzle(id: String, val world: World, mapData: MapData) : CluePuzzle(id, mapData, world) {
     override val name: String = "Build"
+
     val builds = getBuilds(mapData)
     var totalCompleted = 0
 
@@ -81,12 +84,23 @@ class BuildPuzzle(id: String, val world: World, mapData: MapData) : CluePuzzle(i
         }
     }
 
-    @Subscribe
+    @Subscribe(priority = EventPriority.HIGH)
     fun blockPlace(evt: BlockPlaceEvent) {
         val inBound = builds.any { it.checkRegion.contains(evt.block.location.toVector()) }
         if (!inBound) return
         dirtyCheck = true
         lastPlayer = evt.player
+        evt.isCancelled = false
+    }
+
+    @Subscribe(priority = EventPriority.HIGH)
+    fun breaks(evt: BlockDamageEvent) {
+        val inBound = builds.any { it.checkRegion.contains(evt.block.location.toVector()) }
+        if (!inBound) return
+        evt.isCancelled = true
+
+        evt.player.inventory.addItem(ItemStack(evt.block.type))
+        evt.block.breakNaturally()
     }
 
     fun getBuilds(mapData: MapData): List<Build> {

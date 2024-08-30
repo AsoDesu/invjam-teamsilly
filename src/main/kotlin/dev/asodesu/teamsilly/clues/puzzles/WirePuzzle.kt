@@ -27,7 +27,7 @@ class WirePuzzle(id: String, val world: World, mapData: MapData) : CluePuzzle(id
     override val name: String = "Wire"
     private val sides = listOf(arrayOf(1, 0), arrayOf(0, 1), arrayOf(-1, 0), arrayOf(0, -1))
     private val transferableBlocks = listOf(Material.COPPER_BLOCK, Material.WAXED_COPPER_BLOCK, Material.WAXED_CHISELED_COPPER, Material.CHISELED_COPPER, Material.LIGHTNING_ROD)
-    private val finishBlocks = listOf(Material.PURPLE_CONCRETE, Material.MAGENTA_CONCRETE, Material.RED_CONCRETE, Material.LIGHT_BLUE_CONCRETE, Material.YELLOW_CONCRETE, Material.LIME_CONCRETE)
+    private val finishBlocks = listOf(Material.RED_CONCRETE, Material.LIGHT_BLUE_CONCRETE, Material.LIME_CONCRETE)
 
     private var lastInteractPlayer: Player? = null
     private var stepCookie = -1
@@ -119,7 +119,11 @@ class WirePuzzle(id: String, val world: World, mapData: MapData) : CluePuzzle(id
         val button = evt.clickedBlock ?: return
         val block = button.location.off(y = -1).block
         if (button.type != Material.POLISHED_BLACKSTONE_BUTTON) return
+
         if (block.type == Material.CUT_COPPER) return start(block)
+        if (button.location.off(z = 1).block.type == Material.WAXED_CHISELED_COPPER) {
+            start(button.location.off(z = 1).block)
+        }
 
         if (block.type != Material.WAXED_CHISELED_COPPER) return
         evt.isCancelled = true

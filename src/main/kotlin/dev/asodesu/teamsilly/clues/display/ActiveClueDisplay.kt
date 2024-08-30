@@ -25,9 +25,10 @@ class ActiveClueDisplay(val origin: Location, val clue: Clue) : ClueDisplay {
 
     init {
         text(center, 0.4, "<b><gold>${clue.name}", scale = 0.9f, background = false)
-        text((center / 2) + 0.55, 0.9, """
+        text((center / 2) + 0.55, 1.05, """
             <font:asodesu:pixel>TYPE: <gray>${clue.puzzle.name}</gray>
-            PLAYERS: <gray>1 <dark_gray>(2 recommended)</dark_gray></gray>
+            REQUIRES KIT: <gray>${clue.puzzle.kitRequirement}
+            <font:asodesu:padding>a
         """.trimIndent(), scale = 0.8f, background = false)
 
         text((center / 2) + 0.4, 1.7, """
