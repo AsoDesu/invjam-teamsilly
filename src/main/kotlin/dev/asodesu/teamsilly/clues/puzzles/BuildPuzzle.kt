@@ -99,8 +99,8 @@ class BuildPuzzle(id: String, val world: World, mapData: MapData) : CluePuzzle(i
         if (!inBound) return
         evt.isCancelled = true
 
-        evt.player.inventory.addItem(ItemStack(evt.block.type))
-        evt.block.breakNaturally()
+        //evt.player.inventory.addItem(ItemStack(evt.block.type))
+        evt.block.breakNaturally(true)
     }
 
     fun getBuilds(mapData: MapData): List<Build> {

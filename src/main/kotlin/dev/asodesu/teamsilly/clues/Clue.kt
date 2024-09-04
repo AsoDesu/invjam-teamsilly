@@ -24,6 +24,7 @@ class Clue(
     val puzzle: BaseCluePuzzle
 ) : BaseCluePuzzle.CompleteListener {
     var boundSlot: ClueSlot? = null
+    var found = false
     lateinit var scene: SillyGameScene
 
     init {
@@ -41,6 +42,7 @@ class Clue(
     }
 
     fun onComplete(player: OfflinePlayer?) {
+        if (found) return
         val name = player?.name ?: "Someone on your team"
         scene.success("<dark_green>$name</dark_green> found ${this.name}")
         scene.sendTitle(
@@ -52,10 +54,13 @@ class Clue(
 
         scene.players.forEach {
             val scenePlayer = it.player ?: return@forEach
-            scenePlayer.inventory.removeAll { item ->
-                item?.persistentDataContainer?.get(KEY_CLUEID, PersistentDataType.STRING) == id
+            scenePlayer.inventory.forEach { item ->
+                if (item?.persistentDataContainer?.get(KEY_CLUEID, PersistentDataType.STRING) == id) {
+                    item.amount = 0
+                }
             }
         }
+        found = true
     }
 
     override fun onPuzzleComplete(player: Player) {

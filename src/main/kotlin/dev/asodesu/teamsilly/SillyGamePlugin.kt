@@ -2,11 +2,13 @@ package dev.asodesu.teamsilly
 
 import cloud.commandframework.kotlin.extension.buildAndRegister
 import dev.asodesu.origami.engine.Origami
+import dev.asodesu.origami.engine.scene.Scenes
 import dev.asodesu.origami.utilities.commands.commandManager
 import dev.asodesu.teamsilly.build.MapDataHandlers
 import dev.asodesu.teamsilly.config.Config
 import dev.asodesu.teamsilly.config.ConfigCommands
 import dev.asodesu.teamsilly.game.GameCommands
+import dev.asodesu.teamsilly.game.SillyGameScene
 import org.bukkit.plugin.java.JavaPlugin
 
 class SillyGamePlugin : JavaPlugin() {
@@ -20,6 +22,12 @@ class SillyGamePlugin : JavaPlugin() {
             registerCopy("config") { ConfigCommands.register(this) }
             registerCopy("game") { GameCommands.register(this) }
             registerCopy("build") { MapDataHandlers.register(this) }
+        }
+    }
+
+    override fun onDisable() {
+        Scenes.map.forEach { (_, scene) ->
+            if (scene is SillyGameScene) scene.destroy()
         }
     }
 

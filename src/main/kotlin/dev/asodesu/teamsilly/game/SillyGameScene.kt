@@ -16,6 +16,8 @@ import dev.asodesu.teamsilly.clues.ClueManager
 import dev.asodesu.teamsilly.clues.HopperHandler
 import dev.asodesu.teamsilly.clues.SafeHandler
 import dev.asodesu.teamsilly.config.Locations
+import dev.asodesu.teamsilly.kits.KitHandler
+import dev.asodesu.teamsilly.kits.SpeedBehaviour
 import dev.asodesu.teamsilly.utils.reset
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.audience.ForwardingAudience
@@ -48,6 +50,7 @@ class SillyGameScene(val world: World, val mapData: MapData, id: String) : Offli
     override fun setupComponents() {
         this.add(ClueManager(this, mapData))
         this.add(HopperHandler(this, mapData))
+        this.add(KitHandler(this, mapData))
     }
 
     @Subscribe
