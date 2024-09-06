@@ -34,7 +34,7 @@ class WindPuzzle(id: String, val world: World, mapData: MapData) : CluePuzzle(id
     val removeBlocks = mapData.boundingBoxes.all("remove_blocks").withPuzzleId().resolveSingle(world)
     val triggers = mapData.positions.all("wind_trigger").withPuzzleId().resolve(world).map { it.toBlockLocation().noRotation() }
 
-    val sequence = List(8) { Random.nextInt(triggers.indices) }
+    val sequence = List(6) { Random.nextInt(triggers.indices) }
     var instance: Instance? = null
 
     init {

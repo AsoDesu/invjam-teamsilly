@@ -4,12 +4,15 @@ import dev.asodesu.origami.engine.player.PlayerBehaviour
 import dev.asodesu.origami.engine.player.PlayerBehaviourContainer
 import dev.asodesu.origami.engine.wiring.annotations.Subscribe
 import org.bukkit.Material
+import org.bukkit.entity.EntityType
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.PlayerDropItemEvent
+import org.bukkit.event.player.PlayerInteractAtEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 
 class PlayerProtection(c: PlayerBehaviourContainer) : PlayerBehaviour(c) {
@@ -17,6 +20,11 @@ class PlayerProtection(c: PlayerBehaviourContainer) : PlayerBehaviour(c) {
     @Subscribe(ignoreFilter = true)
     fun damage(evt: EntityDamageEvent) {
         if (evt.entity.uniqueId == offlinePlayer.uniqueId) evt.isCancelled = true
+    }
+
+    @Subscribe
+    fun byEntity(evt: EntityDamageByEntityEvent) {
+        if (evt.entity.type == EntityType.ARMOR_STAND) evt.isCancelled = true
     }
 
     @Subscribe
@@ -39,6 +47,12 @@ class PlayerProtection(c: PlayerBehaviourContainer) : PlayerBehaviour(c) {
         if (evt.item?.type?.name?.endsWith("_HELMET") == true) {
             evt.isCancelled = true
         }
+    }
+
+    @Subscribe
+    fun interact(evt: PlayerInteractAtEntityEvent) {
+        if (evt.rightClicked.type == EntityType.ARMOR_STAND || evt.rightClicked.type == EntityType.ITEM_FRAME)
+            evt.isCancelled = true
     }
 
     @Subscribe
