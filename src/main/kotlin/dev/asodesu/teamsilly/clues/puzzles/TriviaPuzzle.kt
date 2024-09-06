@@ -16,6 +16,7 @@ import dev.asodesu.teamsilly.behaviour.DialogueBehaviour
 import dev.asodesu.teamsilly.build.MapData
 import dev.asodesu.teamsilly.build.element.all
 import dev.asodesu.teamsilly.clues.CluePuzzle
+import dev.asodesu.teamsilly.utils.isSpectating
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.NamespacedKey
@@ -63,6 +64,7 @@ class TriviaPuzzle(id: String, val world: World, mapData: MapData) : CluePuzzle(
 
     @Subscribe
     fun boundCheck(evt: PlayerMoveEvent) {
+        if (evt.player.isSpectating) return
         if (evt.player.checkCooldown("trivia/npc_trigger", 10.hours)) return
         if (triggerRegion.contains(evt.to.toVector())) {
             evt.player.send("<gold>[NPC] Flower Guy</gold>: Howdy! Over here!")

@@ -43,14 +43,18 @@ class Clue(
 
     fun onComplete(player: OfflinePlayer?) {
         if (found) return
+        val allCompleted = boundSlot?.onComplete(player) ?: false
+
         val name = player?.name ?: "Someone on your team"
-        scene.success("<dark_green>$name</dark_green> found ${this.name}")
-        scene.sendTitle(
-            subtitle = "<dark_green><obf>[]</obf></dark_green> <green>${this.name} collected</green> <dark_green><obf>[]</dark_green>",
-            stay = 4.seconds
-        )
-        scene.play("asodesu:sillygame.clue_found")
-        boundSlot?.onComplete(player)
+        scene.success("<dark_green>$name</dark_green> found ${this.name} <dark_gray>[+125 points]")
+        if (!allCompleted) {
+            scene.sendTitle(
+                subtitle = "<dark_green><obf>[]</obf></dark_green> <green>${this.name} collected</green> <dark_green><obf>[]</dark_green>",
+                stay = 4.seconds
+            )
+            scene.play("asodesu:sillygame.clue_found")
+        }
+        scene.addScore(125)
 
         scene.players.forEach {
             val scenePlayer = it.player ?: return@forEach

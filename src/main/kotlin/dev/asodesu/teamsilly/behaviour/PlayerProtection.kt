@@ -14,9 +14,9 @@ import org.bukkit.event.player.PlayerInteractEvent
 
 class PlayerProtection(c: PlayerBehaviourContainer) : PlayerBehaviour(c) {
 
-    @Subscribe
+    @Subscribe(ignoreFilter = true)
     fun damage(evt: EntityDamageEvent) {
-        evt.isCancelled = true
+        if (evt.entity.uniqueId == offlinePlayer.uniqueId) evt.isCancelled = true
     }
 
     @Subscribe

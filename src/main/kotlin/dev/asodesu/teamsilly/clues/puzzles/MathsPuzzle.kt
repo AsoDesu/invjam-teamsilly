@@ -14,6 +14,7 @@ import dev.asodesu.teamsilly.behaviour.DialogueBehaviour
 import dev.asodesu.teamsilly.build.MapData
 import dev.asodesu.teamsilly.build.element.all
 import dev.asodesu.teamsilly.clues.CluePuzzle
+import dev.asodesu.teamsilly.utils.isSpectating
 import org.bukkit.NamespacedKey
 import org.bukkit.World
 import org.bukkit.entity.Player
@@ -75,6 +76,7 @@ class MathsPuzzle(id: String, val world: World, mapData: MapData) : CluePuzzle(i
 
     @Subscribe
     fun boundCheck(evt: PlayerMoveEvent) {
+        if (evt.player.isSpectating) return
         if (evt.player.checkCooldown("math/npc_trigger", 10.hours)) return
         if (triggerRegion.contains(evt.to.toVector())) {
             evt.player.send("<gold>[NPC] Ms Math Teacher</gold>: Ah! My new student!")

@@ -23,6 +23,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
     implementation("dev.asodesu.origami.engine:engine:0.0.1-alpha")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Core:2.9.2")
     compileOnly("com.fastasyncworldedit:FastAsyncWorldEdit-Bukkit:2.9.2") { isTransitive = false }
 }

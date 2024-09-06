@@ -3,14 +3,9 @@ package dev.asodesu.teamsilly.clues.slots
 import dev.asodesu.origami.engine.Behaviour
 import dev.asodesu.origami.engine.consumeCooldown
 import dev.asodesu.origami.engine.wiring.annotations.Subscribe
-import dev.asodesu.origami.utilities.bukkit.debug
 import dev.asodesu.origami.utilities.bukkit.play
 import dev.asodesu.origami.utilities.error
-import dev.asodesu.origami.utilities.miniMessage
-import dev.asodesu.origami.utilities.play
-import dev.asodesu.origami.utilities.sendTitle
 import dev.asodesu.origami.utilities.sound
-import dev.asodesu.origami.utilities.success
 import dev.asodesu.teamsilly.build.MapData
 import dev.asodesu.teamsilly.build.element.all
 import dev.asodesu.teamsilly.build.element.noRotation
@@ -19,14 +14,9 @@ import dev.asodesu.teamsilly.clues.Clue
 import dev.asodesu.teamsilly.clues.ClueManager
 import dev.asodesu.teamsilly.clues.display.ActiveClueDisplay
 import dev.asodesu.teamsilly.clues.display.ClueDisplay
-import dev.asodesu.teamsilly.config.Locations
 import dev.asodesu.teamsilly.game.SillyGameScene
-import org.bukkit.Material
 import org.bukkit.OfflinePlayer
-import org.bukkit.entity.Player
 import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.CompassMeta
 import org.bukkit.util.Vector
 import kotlin.time.Duration.Companion.seconds
 
@@ -57,8 +47,9 @@ class ClueSlot(index: Int, val scene: SillyGameScene, mapData: MapData, private 
         }
     }
 
-    fun onComplete(player: OfflinePlayer?) {
+    fun onComplete(player: OfflinePlayer?): Boolean {
         setClue(manager.nextClue())
+        return manager.checkOver()
     }
 
     @Subscribe

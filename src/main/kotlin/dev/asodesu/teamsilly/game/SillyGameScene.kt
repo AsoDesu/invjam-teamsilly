@@ -1,45 +1,44 @@
 package dev.asodesu.teamsilly.game
 
 import dev.asodesu.origami.engine.add
-import dev.asodesu.origami.engine.addBy
 import dev.asodesu.origami.engine.player.container
 import dev.asodesu.origami.engine.scene.OfflinePlayerScene
 import dev.asodesu.origami.engine.wiring.annotations.Subscribe
-import dev.asodesu.origami.utilities.bukkit.allPlayers
+import dev.asodesu.origami.utilities.bukkit.filterUUIDs
 import dev.asodesu.origami.utilities.bukkit.filterWorld
 import dev.asodesu.teamsilly.behaviour.PlayerProtection
 import dev.asodesu.teamsilly.build.MapData
 import dev.asodesu.teamsilly.build.element.all
 import dev.asodesu.teamsilly.build.element.resolve
-import dev.asodesu.teamsilly.clues.Clue
 import dev.asodesu.teamsilly.clues.ClueManager
 import dev.asodesu.teamsilly.clues.HopperHandler
-import dev.asodesu.teamsilly.clues.SafeHandler
-import dev.asodesu.teamsilly.config.Locations
 import dev.asodesu.teamsilly.kits.KitHandler
-import dev.asodesu.teamsilly.kits.SpeedBehaviour
 import dev.asodesu.teamsilly.utils.reset
-import net.kyori.adventure.audience.Audience
+import java.util.*
 import net.kyori.adventure.audience.ForwardingAudience
 import org.bukkit.GameMode
 import org.bukkit.Location
 import org.bukkit.OfflinePlayer
 import org.bukkit.World
-import org.bukkit.entity.Player
 import org.bukkit.event.Event
+import org.bukkit.event.player.PlayerJoinEvent
 import org.spigotmc.event.player.PlayerSpawnLocationEvent
 
-class SillyGameScene(val world: World, val mapData: MapData, id: String) : OfflinePlayerScene(id), ForwardingAudience {
+class SillyGameScene(val world: World, val mapData: MapData, val team: Teams.Team, id: String) : OfflinePlayerScene(id), ForwardingAudience {
     val playerSpawnPositions = mapData.positions.all("player_spawn").resolve(world)
     var avaliableSpawns = playerSpawnPositions.toMutableList()
+    val initalised = mutableListOf<UUID>()
 
     override fun init() {
         super.init()
-        allPlayers.forEach {
+        team.offlinePlayers.forEach {
             addPlayer(it)
-            it.teleportAsync(getPlayerSpawn())
-            it.reset()
-            it.gameMode = GameMode.SURVIVAL
+
+            val player = it.player ?: return@forEach
+            player.teleportAsync(getPlayerSpawn())
+            player.reset()
+            player.gameMode = GameMode.SURVIVAL
+            initalised += player.uniqueId
         }
     }
 
@@ -55,7 +54,16 @@ class SillyGameScene(val world: World, val mapData: MapData, id: String) : Offli
 
     @Subscribe
     fun location(evt: PlayerSpawnLocationEvent) {
+        if (initalised.contains(evt.player.uniqueId)) return
         evt.spawnLocation = getPlayerSpawn()
+    }
+
+    @Subscribe
+    fun join(evt: PlayerJoinEvent) {
+        if (initalised.contains(evt.player.uniqueId)) return
+        evt.player.reset()
+        evt.player.gameMode = GameMode.SURVIVAL
+        initalised += evt.player.uniqueId
     }
 
     fun getPlayerSpawn(): Location {
@@ -68,6 +76,10 @@ class SillyGameScene(val world: World, val mapData: MapData, id: String) : Offli
         return spawn
     }
 
+    fun addScore(score: Int) {
+        team.totalScore += score
+    }
+
     override fun audiences() = players.mapNotNull { it.player }
-    override fun filter(event: Event) = event.filterWorld(world)
+    override fun filter(event: Event) = event.filterWorld(world) || event.filterUUIDs(uuids, false)
 }

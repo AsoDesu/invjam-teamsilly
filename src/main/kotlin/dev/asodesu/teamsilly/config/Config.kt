@@ -8,7 +8,7 @@ import kotlin.reflect.KProperty
 abstract class Config(name: String) : YmlConfig(name) {
     companion object {
         val values = mutableMapOf<String, Config>(
-            "locations" to Locations
+            "teamapi" to TeamApi
         )
 
         fun init() {

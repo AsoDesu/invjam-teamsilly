@@ -3,6 +3,7 @@ package dev.asodesu.teamsilly.clues
 import dev.asodesu.origami.engine.Behaviour
 import dev.asodesu.origami.engine.get
 import dev.asodesu.origami.engine.wiring.annotations.Subscribe
+import dev.asodesu.origami.utilities.bukkit.debug
 import dev.asodesu.origami.utilities.bukkit.nextTick
 import dev.asodesu.teamsilly.KEY_CLUEID
 import dev.asodesu.teamsilly.KEY_HOPPER

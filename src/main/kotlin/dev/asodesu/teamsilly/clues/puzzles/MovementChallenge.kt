@@ -4,6 +4,7 @@ import dev.asodesu.origami.engine.wiring.annotations.Subscribe
 import dev.asodesu.teamsilly.build.MapData
 import dev.asodesu.teamsilly.build.element.all
 import dev.asodesu.teamsilly.clues.CluePuzzle
+import dev.asodesu.teamsilly.utils.isSpectating
 import org.bukkit.World
 import org.bukkit.event.player.PlayerMoveEvent
 
@@ -19,6 +20,7 @@ open class MovementChallenge(
     @Subscribe
     fun move(evt: PlayerMoveEvent) {
         if (this.isCompleted) return
+        if (evt.player.isSpectating) return
         if (finishRegion.contains(evt.to.toVector())) {
             this.complete(evt.player)
         }
