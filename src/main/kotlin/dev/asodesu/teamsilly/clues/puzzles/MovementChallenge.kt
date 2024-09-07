@@ -37,7 +37,7 @@ open class MovementChallenge(
                 player.inventory.remove(Material.WIND_CHARGE)
             } else if (kitId == "elytra") {
                 player.warning("Your elytra has been removed in the parkour challenge")
-                player.inventory.remove(Material.ELYTRA)
+                player.inventory.setItem(EquipmentSlot.CHEST, ItemStack.empty())
             }
         }
     }
